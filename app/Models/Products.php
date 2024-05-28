@@ -5,40 +5,45 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Products extends Model
+use App\Models\Customers;
+use App\Models\Employees;
+use App\Models\Shippers;
+
+class Orders extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'ProductID',
-        'ProductName',
-        'SupplierID',
-        'CategoryID',
-        'Unit',
-        'Price'
+        'OrderID',
+        'CustomerID',
+        'EmployeeID',
+        'OrderDate',
+        'ShipperID'
     ];
 
     public $timestamps = false;
 
-    protected $primaryKey = 'ProductID';
+    protected $primaryKey = 'OrderID';
 
     // Definicija stranih ključeva
-
-    public function orders()
+    public function customer()
     {
-        return $this->belongsToMany(Orders::class, 'order_details', 'ProductID', 'OrderID');
+        return $this->belongsTo(Customers::class, 'CustomerID', 'CustomerID');
     }
 
-
-    public function supplier()
+    public function employee()
     {
-        return $this->hasOne(Suppliers::class, 'SupplierID', 'SupplierID');
+        return $this->belongsTo(Employees::class, 'EmployeeID', 'EmployeeID');
     }
 
-
-
-    public function category()
+    public function shipper()
     {
-        return $this->belongsTo(Category::class, 'CategoryID', 'CategoryID');
+        return $this->belongsTo(Shippers::class, 'ShipperID', 'ShipperID');
+    }
+
+    // Relacija mnogo prema mnogo s Products
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'order_details', 'OrderID', 'ProductID');
     }
 }
